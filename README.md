@@ -1,4 +1,4 @@
-[Work in progress] Adafruit_ILI9340 port for Spark Core
+Adafruit_ILI9340 port for Spark Core
 ================
 
 This is a port of Adafruit_ILI9340 library compatible with Spark Core devices.
