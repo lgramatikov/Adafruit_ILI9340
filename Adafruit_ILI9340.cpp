@@ -1,4 +1,4 @@
-﻿/***************************************************
+/***************************************************
 This is an Arduino Library for the Adafruit 2.2" SPI display.
 This library works with the Adafruit 2.2" TFT Breakout w/SD card
 ----> http://www.adafruit.com/products/1480
@@ -40,25 +40,23 @@ void Adafruit_ILI9340::spiwrite(uint8_t c) {
 }
 
 void Adafruit_ILI9340::writecommand(uint8_t c) {
-
-	digitalWrite(_dc, LOW);
-	digitalWrite(_sclk, LOW);
-	digitalWrite(_cs, LOW);
+	PIN_MAP[_dc].gpio_peripheral->BRR = PIN_MAP[_dc].gpio_pin;
+	PIN_MAP[_sclk].gpio_peripheral->BRR = PIN_MAP[_sclk].gpio_pin;
+	PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
 
 	spiwrite(c);
 
-	digitalWrite(_cs, HIGH);
+	PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
 }
 
 void Adafruit_ILI9340::writedata(uint8_t c) {
-
-	digitalWrite(_dc, HIGH);
-	digitalWrite(_sclk, LOW);
-	digitalWrite(_cs, LOW);
+	PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
+	PIN_MAP[_sclk].gpio_peripheral->BRR = PIN_MAP[_sclk].gpio_pin;
+	PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
 
 	spiwrite(c);
 
-	digitalWrite(_cs, HIGH);
+	PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
 }
 
 // Rather than a bazillion writecommand() and writedata() calls, screen
@@ -159,20 +157,20 @@ void Adafruit_ILI9340::begin(void) {
 	writedata(0x00);
 	writedata(0x00);
 
-	writecommand(ILI9340_PWCTR1);    //Power control 
-	writedata(0x23);   //VRH[5:0] 
+	writecommand(ILI9340_PWCTR1);    //Power control
+	writedata(0x23);   //VRH[5:0]
 
-	writecommand(ILI9340_PWCTR2);    //Power control 
-	writedata(0x10);   //SAP[2:0];BT[3:0] 
+	writecommand(ILI9340_PWCTR2);    //Power control
+	writedata(0x10);   //SAP[2:0];BT[3:0]
 
-	writecommand(ILI9340_VMCTR1);    //VCM control 
+	writecommand(ILI9340_VMCTR1);    //VCM control
 	writedata(0x3e);
 	writedata(0x28);
 
-	writecommand(ILI9340_VMCTR2);    //VCM control2 
+	writecommand(ILI9340_VMCTR2);    //VCM control2
 	writedata(0x86);  //--
 
-	writecommand(ILI9340_MADCTL);    // Memory Access Control 
+	writecommand(ILI9340_MADCTL);    // Memory Access Control
 	writedata(ILI9340_MADCTL_MX | ILI9340_MADCTL_BGR);
 
 	writecommand(ILI9340_PIXFMT);
@@ -182,18 +180,18 @@ void Adafruit_ILI9340::begin(void) {
 	writedata(0x00);
 	writedata(0x18);
 
-	writecommand(ILI9340_DFUNCTR);    // Display Function Control 
+	writecommand(ILI9340_DFUNCTR);    // Display Function Control
 	writedata(0x08);
 	writedata(0x82);
 	writedata(0x27);
 
-	writecommand(0xF2);    // 3Gamma Function Disable 
+	writecommand(0xF2);    // 3Gamma Function Disable
 	writedata(0x00);
 
-	writecommand(ILI9340_GAMMASET);    //Gamma curve selected 
+	writecommand(ILI9340_GAMMASET);    //Gamma curve selected
 	writedata(0x01);
 
-	writecommand(ILI9340_GMCTRP1);    //Set Gamma 
+	writecommand(ILI9340_GMCTRP1);    //Set Gamma
 	writedata(0x0F);
 	writedata(0x31);
 	writedata(0x2B);
@@ -210,7 +208,7 @@ void Adafruit_ILI9340::begin(void) {
 	writedata(0x09);
 	writedata(0x00);
 
-	writecommand(ILI9340_GMCTRN1);    //Set Gamma 
+	writecommand(ILI9340_GMCTRN1);    //Set Gamma
 	writedata(0x00);
 	writedata(0x0E);
 	writedata(0x14);
@@ -227,16 +225,16 @@ void Adafruit_ILI9340::begin(void) {
 	writedata(0x36);
 	writedata(0x0F);
 
-	writecommand(ILI9340_SLPOUT);    //Exit Sleep 
+	writecommand(ILI9340_SLPOUT);    //Exit Sleep
 	delay(120);
-	writecommand(ILI9340_DISPON);    //Display on 
+	writecommand(ILI9340_DISPON);    //Display on
 }
 
 void Adafruit_ILI9340::setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1,	uint16_t y1) {
 
 	writecommand(ILI9340_CASET); // Column addr set
 	writedata(x0 >> 8);
-	writedata(x0 & 0xFF);     // XSTART 
+	writedata(x0 & 0xFF);     // XSTART
 	writedata(x1 >> 8);
 	writedata(x1 & 0xFF);     // XEND
 
@@ -250,14 +248,13 @@ void Adafruit_ILI9340::setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1,	uint
 }
 
 void Adafruit_ILI9340::pushColor(uint16_t color) {
-
-	digitalWrite(_dc, HIGH);
-	digitalWrite(_cs, LOW);
+	PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
+	PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
 
 	spiwrite(color >> 8);
 	spiwrite(color);
 
-	digitalWrite(_cs, HIGH);
+	PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
 }
 
 void Adafruit_ILI9340::drawPixel(int16_t x, int16_t y, uint16_t color) {
@@ -268,13 +265,7 @@ void Adafruit_ILI9340::drawPixel(int16_t x, int16_t y, uint16_t color) {
 
 	setAddrWindow(x, y, x + 1, y + 1);
 
-	digitalWrite(_dc, HIGH);
-	digitalWrite(_cs, LOW);
-
-	spiwrite(color >> 8);
-	spiwrite(color);
-
-	digitalWrite(_cs, HIGH);
+	pushColor(color);
 }
 
 void Adafruit_ILI9340::drawFastVLine(int16_t x, int16_t y, int16_t h,
@@ -293,15 +284,15 @@ void Adafruit_ILI9340::drawFastVLine(int16_t x, int16_t y, int16_t h,
 
 	uint8_t hi = color >> 8, lo = color;
 
-	digitalWrite(_dc, HIGH);
-	digitalWrite(_cs, LOW);
+	PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
+	PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
 
 	while (h--) {
 		spiwrite(hi);
 		spiwrite(lo);
 	}
 
-	digitalWrite(_cs, HIGH);
+	PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
 }
 
 void Adafruit_ILI9340::drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) {
@@ -310,24 +301,24 @@ void Adafruit_ILI9340::drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t c
 	if ((x >= _width) || (y >= _height)) {
 		return;
 	}
-	
+
 	if ((x + w - 1) >= _width) {
 		w = _width - x;
 	}
-	
+
 	setAddrWindow(x, y, x + w - 1, y);
 
 	uint8_t hi = color >> 8, lo = color;
 
-	digitalWrite(_dc, HIGH);
-	digitalWrite(_cs, LOW);
+	PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
+	PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
 
 	while (w--) {
 		spiwrite(hi);
 		spiwrite(lo);
 	}
 
-	digitalWrite(_cs, HIGH);
+	PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
 }
 
 void Adafruit_ILI9340::fillScreen(uint16_t color) {
@@ -346,7 +337,7 @@ void Adafruit_ILI9340::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
 	if ((x + w - 1) >= _width) {
 		w = _width - x;
 	}
-	
+
 	if ((y + h - 1) >= _height) {
 		h = _height - y;
 	}
@@ -355,8 +346,8 @@ void Adafruit_ILI9340::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
 
 	uint8_t hi = color >> 8, lo = color;
 
-	digitalWrite(_dc, HIGH);
-	digitalWrite(_cs, LOW);
+	PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
+	PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
 
 	for (y = h; y > 0; y--) {
 		for (x = w; x > 0; x--) {
@@ -365,7 +356,7 @@ void Adafruit_ILI9340::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
 		}
 	}
 
-	digitalWrite(_cs, HIGH);
+	PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
 }
 
 // Pass 8-bit (each) R,G,B, get back 16-bit packed color
@@ -420,22 +411,28 @@ uint8_t Adafruit_ILI9340::spiread(void) {
 }
 
 uint8_t Adafruit_ILI9340::readdata(void) {
-	digitalWrite(_dc, HIGH);
-	digitalWrite(_cs, LOW);
+	PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
+	PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+
 	uint8_t r = spiread();
-	digitalWrite(_cs, HIGH);
+
+	PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
 
 	return r;
 }
 
 uint8_t Adafruit_ILI9340::readcommand8(uint8_t c) {
-	digitalWrite(_dc, LOW);
-	digitalWrite(_sclk, LOW);
-	digitalWrite(_cs, LOW);
+	PIN_MAP[_dc].gpio_peripheral->BRR = PIN_MAP[_dc].gpio_pin;
+	PIN_MAP[_sclk].gpio_peripheral->BRR = PIN_MAP[_sclk].gpio_pin;
+	PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+
 	spiwrite(c);
 
-	digitalWrite(_dc, HIGH);
+	PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
+
 	uint8_t r = spiread();
-	digitalWrite(_cs, HIGH);
+
+	PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+
 	return r;
 }
