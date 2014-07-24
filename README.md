@@ -10,3 +10,5 @@ I've only removed AVR specific parts, support for software SPI and some small th
 Works on my machine using 2.2" screen from www.electrodragon.com/product/eds-tft-lcd-lcm-spi-interface-variable1-82-2.
 
 There is another library for Spark Core devices available at https://github.com/lbarrosoneto/Adafruit_TFT. It might also work with these screens.
+
+Speed improvements have been submitted by evuolas (https://github.com/evuolas) and peekay123 (https://github.com/pkourany).
