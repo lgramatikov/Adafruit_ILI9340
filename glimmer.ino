@@ -15,78 +15,11 @@ MIT license, all text above must be included in any redistribution
 ****************************************************/
 
 //#include "SPI.h"
+#include "application.h"
 #include "Adafruit_GFX.h"
 #include "Adafruit_ILI9340.h"
 
 Adafruit_ILI9340 tft = Adafruit_ILI9340(A2, A1, A0);
-
-void setup() {
-	Serial.begin(9600);
-	delay(20000); //Give me a chance to do the "sudo cat /dev/ttyACM0" thingy
-	
-	Serial.println("Adafruit 2.2\" SPI TFT Test!");
-
-	tft.begin();
-
-	Serial.println("Benchmark                Time (microseconds)");
-	Serial.print("Screen fill              ");
-	Serial.println(testFillScreen());
-	delay(500);
-
-	Serial.print("Text                     ");
-	Serial.println(testText());
-	delay(3000);
-
-	Serial.print("Lines                    ");
-	Serial.println(testLines(ILI9340_CYAN));
-	delay(500);
-
-	Serial.print("Horiz/Vert Lines         ");
-	Serial.println(testFastLines(ILI9340_RED, ILI9340_BLUE));
-	delay(500);
-
-	Serial.print("Rectangles (outline)     ");
-	Serial.println(testRects(ILI9340_GREEN));
-	delay(500);
-
-	Serial.print("Rectangles (filled)      ");
-	Serial.println(testFilledRects(ILI9340_YELLOW, ILI9340_MAGENTA));
-	delay(500);
-
-	Serial.print("Circles (filled)         ");
-	Serial.println(testFilledCircles(10, ILI9340_MAGENTA));
-
-	Serial.print("Circles (outline)        ");
-	Serial.println(testCircles(10, ILI9340_WHITE));
-	delay(500);
-
-	Serial.print("Triangles (outline)      ");
-	Serial.println(testTriangles());
-	delay(500);
-
-	Serial.print("Triangles (filled)       ");
-	Serial.println(testFilledTriangles());
-	delay(500);
-
-	Serial.print("Rounded rects (outline)  ");
-	Serial.println(testRoundRects());
-	delay(500);
-
-	Serial.print("Rounded rects (filled)   ");
-	Serial.println(testFilledRoundRects());
-	delay(500);
-
-	Serial.println("Done!");
-}
-
-void loop(void) {
-	for (uint8_t rotation = 0; rotation<4; rotation++) {
-		tft.setRotation(rotation);
-		testText();
-		delay(2000);
-	}
-}
-
 
 unsigned long testFillScreen() {
 	unsigned long start = micros();
@@ -327,4 +260,71 @@ unsigned long testFilledRoundRects() {
 	}
 
 	return micros() - start;
+}
+
+void setup() {
+	Serial.begin(9600);
+	delay(20000); //Give me a chance to do the "sudo cat /dev/ttyACM0" thingy
+
+	Serial.println("Adafruit 2.2\" SPI TFT Test!");
+
+	tft.begin();
+
+	Serial.println("Benchmark                Time (microseconds)");
+	Serial.print("Screen fill              ");
+	Serial.println(testFillScreen());
+	delay(500);
+
+	Serial.print("Text                     ");
+	Serial.println(testText());
+	delay(3000);
+
+	Serial.print("Lines                    ");
+	Serial.println(testLines(ILI9340_CYAN));
+	delay(500);
+
+	Serial.print("Horiz/Vert Lines         ");
+	Serial.println(testFastLines(ILI9340_RED, ILI9340_BLUE));
+	delay(500);
+
+	Serial.print("Rectangles (outline)     ");
+	Serial.println(testRects(ILI9340_GREEN));
+	delay(500);
+
+	Serial.print("Rectangles (filled)      ");
+	Serial.println(testFilledRects(ILI9340_YELLOW, ILI9340_MAGENTA));
+	delay(500);
+
+	Serial.print("Circles (filled)         ");
+	Serial.println(testFilledCircles(10, ILI9340_MAGENTA));
+
+	Serial.print("Circles (outline)        ");
+	Serial.println(testCircles(10, ILI9340_WHITE));
+	delay(500);
+
+	Serial.print("Triangles (outline)      ");
+	Serial.println(testTriangles());
+	delay(500);
+
+	Serial.print("Triangles (filled)       ");
+	Serial.println(testFilledTriangles());
+	delay(500);
+
+	Serial.print("Rounded rects (outline)  ");
+	Serial.println(testRoundRects());
+	delay(500);
+
+	Serial.print("Rounded rects (filled)   ");
+	Serial.println(testFilledRoundRects());
+	delay(500);
+
+	Serial.println("Done!");
+}
+
+void loop(void) {
+	for (uint8_t rotation = 0; rotation<4; rotation++) {
+		tft.setRotation(rotation);
+		testText();
+		delay(2000);
+	}
 }
