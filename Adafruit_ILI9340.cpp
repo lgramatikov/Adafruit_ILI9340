@@ -40,23 +40,31 @@ void Adafruit_ILI9340::spiwrite(uint8_t c) {
 }
 
 void Adafruit_ILI9340::writecommand(uint8_t c) {
-	PIN_MAP[_dc].gpio_peripheral->BRR = PIN_MAP[_dc].gpio_pin;
-	PIN_MAP[_sclk].gpio_peripheral->BRR = PIN_MAP[_sclk].gpio_pin;
-	PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+	//PIN_MAP[_dc].gpio_peripheral->BRR = PIN_MAP[_dc].gpio_pin;
+	pinResetFast(_dc);
+	//PIN_MAP[_sclk].gpio_peripheral->BRR = PIN_MAP[_sclk].gpio_pin;
+	pinResetFast(_sclk);
+	//PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+	pinResetFast(_cs);
 
 	spiwrite(c);
 
-	PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+	//PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+	pinSetFast(_cs);
 }
 
 void Adafruit_ILI9340::writedata(uint8_t c) {
-	PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
-	PIN_MAP[_sclk].gpio_peripheral->BRR = PIN_MAP[_sclk].gpio_pin;
-	PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+	//PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
+	pinSetFast(_dc);
+	//PIN_MAP[_sclk].gpio_peripheral->BRR = PIN_MAP[_sclk].gpio_pin;
+	pinResetFast(_sclk);
+	//PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+	pinResetFast(_cs);
 
 	spiwrite(c);
 
-	PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+	//PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+	pinSetFast(_cs);
 }
 
 // Rather than a bazillion writecommand() and writedata() calls, screen
@@ -248,13 +256,16 @@ void Adafruit_ILI9340::setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1,	uint
 }
 
 void Adafruit_ILI9340::pushColor(uint16_t color) {
-	PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
-	PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+	//PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
+	pinSetFast(_dc);
+	//PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+	pinResetFast(_cs);
 
 	spiwrite(color >> 8);
 	spiwrite(color);
 
-	PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+	//PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+	pinSetFast(_cs);
 }
 
 void Adafruit_ILI9340::drawPixel(int16_t x, int16_t y, uint16_t color) {
@@ -284,15 +295,18 @@ void Adafruit_ILI9340::drawFastVLine(int16_t x, int16_t y, int16_t h,
 
 	uint8_t hi = color >> 8, lo = color;
 
-	PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
-	PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+	//PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
+	pinSetFast(_dc);
+	//PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+	pinResetFast(_cs);
 
 	while (h--) {
 		spiwrite(hi);
 		spiwrite(lo);
 	}
 
-	PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+	//PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+	pinSetFast(_cs);
 }
 
 void Adafruit_ILI9340::drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) {
@@ -310,15 +324,18 @@ void Adafruit_ILI9340::drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t c
 
 	uint8_t hi = color >> 8, lo = color;
 
-	PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
-	PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+	//PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
+	pinSetFast(_dc);
+	//PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+	pinResetFast(_cs);
 
 	while (w--) {
 		spiwrite(hi);
 		spiwrite(lo);
 	}
 
-	PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+	//PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+	pinSetFast(_cs);
 }
 
 void Adafruit_ILI9340::fillScreen(uint16_t color) {
@@ -346,8 +363,10 @@ void Adafruit_ILI9340::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
 
 	uint8_t hi = color >> 8, lo = color;
 
-	PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
-	PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+	//PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
+	pinSetFast(_dc);
+	//PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+	pinResetFast(_cs);
 
 	for (y = h; y > 0; y--) {
 		for (x = w; x > 0; x--) {
@@ -356,7 +375,8 @@ void Adafruit_ILI9340::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
 		}
 	}
 
-	PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+	//PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+	pinSetFast(_cs);
 }
 
 // Pass 8-bit (each) R,G,B, get back 16-bit packed color
@@ -411,28 +431,36 @@ uint8_t Adafruit_ILI9340::spiread(void) {
 }
 
 uint8_t Adafruit_ILI9340::readdata(void) {
-	PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
-	PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+	//PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
+	pinSetFast(_dc);
+	//PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+	pinResetFast(_cs);
 
 	uint8_t r = spiread();
 
-	PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+	//PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+	pinSetFast(_cs);
 
 	return r;
 }
 
 uint8_t Adafruit_ILI9340::readcommand8(uint8_t c) {
-	PIN_MAP[_dc].gpio_peripheral->BRR = PIN_MAP[_dc].gpio_pin;
-	PIN_MAP[_sclk].gpio_peripheral->BRR = PIN_MAP[_sclk].gpio_pin;
-	PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+	//PIN_MAP[_dc].gpio_peripheral->BRR = PIN_MAP[_dc].gpio_pin;
+	pinResetFast(_dc);
+	//PIN_MAP[_sclk].gpio_peripheral->BRR = PIN_MAP[_sclk].gpio_pin;
+	pinResetFast(_sclk);
+	//PIN_MAP[_cs].gpio_peripheral->BRR = PIN_MAP[_cs].gpio_pin;
+	pinResetFast(_cs);
 
 	spiwrite(c);
 
-	PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
+	//PIN_MAP[_dc].gpio_peripheral->BSRR = PIN_MAP[_dc].gpio_pin;
+	pinSetFast(_dc);
 
 	uint8_t r = spiread();
 
-	PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+	//PIN_MAP[_cs].gpio_peripheral->BSRR = PIN_MAP[_cs].gpio_pin;
+	pinSetFast(_cs);
 
 	return r;
 }
